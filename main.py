@@ -1,5 +1,6 @@
 # import the module
 import math
+import time
 from datetime import date, datetime
 
 import tweepy
@@ -22,6 +23,17 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 
 user = api.get_user(screen_name='shznaqvi')
 followers = api.get_follower_ids(screen_name='shznaqvi')
+
+# Self Rating Calculations
+uffCount = max(user.followers_count, 1)
+ufrCount = max(user.friends_count, 1)
+utCount = max(user.statuses_count, 1)
+if uffCount != 0 and ufrCount != 0 and utCount != 0:
+    ufRating = math.log10(utCount * (uffCount / ufrCount))
+else:
+    ufRating = 0
+
+print("Self URating: " + str(ufRating))
 
 # print(api.get_user(screen_name='AnzarFarhala'))
 # print(api.get_user(screen_name='AnzarFarhala').followers_count)
@@ -47,12 +59,14 @@ notFollower = False
 friends = []
 
 for friend in tweepy.Cursor(api.get_friends, screen_name=user.screen_name).items():
+    time.sleep(3)
     if not hasattr(friend, 'status'):
         #        print(friend.status)
         print("**************************************** NO STATUS")
         # inactive_friends.append(friend)
         print(friend.screen_name, "--- unfollowed")
         a_file.write(str(friend.screen_name) + " - No Status")
+        a_file.write("\n")
         friend.unfollow()
 
         continue
@@ -106,11 +120,11 @@ for friend in tweepy.Cursor(api.get_friends, screen_name=user.screen_name).items
             # inactive_friends.append(friend)
             friend.unfollow()
             a_file.write(str(friend.screen_name) + " - " + str(delta.days) + "(Rating: " + str(fRating) + ")")
-            print(friend.screen_name, "--- unfollowed (1000 days)")
+            print(friend.screen_name, "--- unfollowed (" + str(delta.days) + " days)")
             # if notFollower:
             #     a_file.write(" < - Not Follower")
             a_file.write("\n")
-        if fRating < 3.33:
+        if fRating < ufRating / 2:
             print("==================================================")
             # inactive_friends.append(friend)
             b_file.write(str(friend.screen_name) + " - " + str(delta.days) + "(Rating: " + str(fRating) + ")")
@@ -118,13 +132,11 @@ for friend in tweepy.Cursor(api.get_friends, screen_name=user.screen_name).items
             #     a_file.write(" < - Not Follower")
             b_file.write("\n")
             if delta.days > 8:
-                print(friend.screen_name, "--- unfollowed (low rating - 8days")
+                print(friend.screen_name, "--- unfollowed (low rating - " + str(delta.days) + " days")
                 friend.unfollow()
             if friend in notFollowing:
                 print(friend.screen_name, "----------------------------------- unfollowed (low rating - not following")
                 friend.unfollow()
-
-
     else:
         print(friend.screen_name, "--- unfollowed (status 0")
         friend.unfollow()
