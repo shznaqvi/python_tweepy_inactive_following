@@ -51,10 +51,14 @@ inactive_friends = []
 #    print(difference_in_years)
 #    # print(date.today())
 count = 0
-a_file = open("inactive_friends.txt", "a")
-b_file = open("lowrating_friends.txt", "a")
-c_file = open("notfollowing_friends.txt", "a")
-d_file = open("unfollowed _friends.txt", "a")
+
+today = str(date.today())
+# print(date.today())
+
+a_file = open(today + "_inactive_friends.txt", "a")
+b_file = open(today + "_lowrating_friends.txt", "a")
+c_file = open(today + "_notfollowing_friends.txt", "a")
+d_file = open(today + "_unfollowed _friends.txt", "a")
 notFollowing = []
 notFollower = False
 friends = []
