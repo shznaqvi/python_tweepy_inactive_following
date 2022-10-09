@@ -143,15 +143,20 @@ for friend in tweepy.Cursor(api.get_friends, screen_name=user.screen_name).items
             if delta.days > 90:
                 print(friend.screen_name, "--- unfollowed (low rating - " + str(delta.days) + " days")
                 friend.unfollow()
-                d_file.write(str(friend.screen_name) + ", " + str(ffCount) + ", " + str(frCount) + ", " + str(tCount) + ", " + str(delta.days) + ", " + str(fRating) + ", " + str(ufRating) + ", Low Rating+Inactive")
+                d_file.write(str(friend.screen_name) + ", " + str(ffCount) + ", " + str(frCount) + ", " + str(
+                    tCount) + ", " + str(delta.days) + ", " + str(fRating) + ", " + str(
+                    ufRating) + ", Low Rating+Inactive")
                 d_file.write("\n")
-            if friend in notFollowing:
+            elif friend in notFollowing:
                 print(friend.screen_name, "----------------------------------- unfollowed (low rating - not following")
                 friend.unfollow()
                 d_file.write(str(friend.screen_name) + ", " + str(ffCount) + ", " + str(frCount) + ", " + str(
                     tCount) + ", " + str(delta.days) + ", " + str(fRating) + ", " + str(
                     ufRating) + ", Low Rating+NotFollowing")
                 d_file.write("\n")
+            else:
+                print(friend.screen_name, "--- " + str(delta.days) + " days OR Following")
+
         if fRating < ufRating / 2:
             print(friend.screen_name, "----------------------------------- unfollowed (following but low rating")
             friend.unfollow()
